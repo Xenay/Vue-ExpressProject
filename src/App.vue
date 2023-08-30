@@ -5,9 +5,11 @@
         <a class = "nav-link" href = "/about" >Phototracker </a>
       </div>
       <div class="nav-links">
-        <router-link to="/">Home</router-link>
-        <a class = "nav-link" v-on:click= "authent" href = "/login" >Log In </a>
-        <a class = "nav-link" href = "/register" > SignUp </a>
+        <a class = "nav-link" href = "/"> Home </a>
+        <a v-if = "isLoggedIn ===true" class = "nav-link" v-on:click= "authent" href = "/login" >Log In </a>
+        <a v-if = "isLoggedIn ===true" class = "nav-link" href = "/register" > SignUp </a>
+        <a v-if = "isLoggedIn ===false" class = "nav-link" href = "/profile" > Profile </a>
+         
       </div>
     </nav>
     <router-view />
@@ -26,8 +28,62 @@ export default {
   name: 'App',
   components: {
     HomeView,
+  },
+
+data() {
+  return{
+    login: [],
+    isLoggedIn: false,
+    isAdmin: false
+}},
+
+methods: {
+
+  async authent() {
+  try {
+    let res = await axios.get('https://localhost:5000//user/me', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+    });
+
+    let data = res.data;
+    this.login = data;
+
+    localStorage.setItem('isAdmin', data.isAdmin);
+
+    store.login = res.data;
+    this.isLoggedIn = true; // Set isLoggedIn to true if the user is authenticated
+  } catch (err) {
+    console.error(err);
+    this.isLoggedIn = false; // Set isLoggedIn to false if there is an error
   }
-}
+},
+
+async check() {
+  if (authent() == true){ isLoggedIn = "true"
+  console.log("logged in!")}
+  else{ isLoggedIn = "false";
+  console.log("notloggedin");}
+},
+async checkIfLoggedIn() {
+  try {
+   
+    this.isLoggedIn = toLowerCase(localStorage.getItem("isLoggedIn"));
+  } catch (error) {
+    
+  }
+
+},
+},
+mounted() {
+//this.check();
+PostService.authent();
+this.authent;
+this.checkIfLoggedIn();
+},
+};
+
+
+
 </script>
 
 <style>

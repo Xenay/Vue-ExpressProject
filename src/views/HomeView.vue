@@ -1,43 +1,32 @@
 <template>
     <div class = "cardimage">
    
-     
-       
-      <h1 class="textfont"> Latest posts </h1>
-      <div class="create-post" v-if="isAdmin === true">
-        <label for="create-post">Upload video</label>
-        <input type="text" id="create-post" v-model="text">
-        <button v-on:click= "createPost">Post</button>
-      </div>
+      <h1 class="textfont"> Latest Users </h1>
       <hr>
+      
       <p class = "error" v-if= "error" > {{error}} </p>
       
      <div class = "posts-container">
-       <div class = "post"
-       v-for="(post,index) in posts"
-       v-bind:item = "post"
-       v-bind:index = "index"
-       v-bind:key = "post.text">
+      
+       <div class = "cardborder"
+       v-for="user in users" :key="user.id">
+      <b-card-body>
+      <b-card-title>{{ user.name }}</b-card-title>
+      <hr>
+      <b-card-text>
+        Some quick example text to build on the card title and make up the bulk of the card's
+        content.
+      </b-card-text>
+      <hr>
+      {{ typeof user.equipment === 'string' ? user.equipment.replace(/[\[\]]/g, '') : user.equipment }}    </b-card-body>
+      Contact: {{ user.email }}
+      
+      </div>
       <br>
-       
-     <div class="textfont">
-       {{ `${post.createdAt.getDate()}/${post.createdAt.getMonth()+1}/${post.createdAt.getFullYear()}/`}}
-     </div>
-     
-    
-       <br>
-       <div class="textfont">
-       <router-link @click.native="putsore(post._id)" :to = "{path: '/challenges', query: {url: post.text}}">  Results </router-link>
-       
-       </div>
-       
-       </div>
-    </div>
-    </div>
-    
-    
+      </div>
+  </div>
+
    </template>
-   
    <script>
    // @ is an alias to /src
    import PostService from '../PostService';
@@ -58,47 +47,59 @@
      name: 'HomeView',
      data() {
        return {
-         posts: [],
+         users: [],
          error: '',
          text: '',
-         
-         isAdmin: false
-       
-         
-         
+         image: "@/assets/logo.png",
+        
+         currentPhotoIndex: 0
        }
+
+
+
      },
      async created() {
        try {
-         this.posts = await PostService.getPosts();
-         
-         this.isAdmin = store.login.isAdmin;
-         
-         
+        this.users = await PostService.getUsers();
          
        } catch (err) {
          this.error = err.message;
        }
      },
+
+     computed: {
+    currentPhoto() {
+      return this.user.photos[this.currentPhotoIndex]
+    }
+  },
+
      methods: {
-       async createPost() {
-         await PostService.insertPost(this.text);
-         this.posts = await PostService.getPosts();
-       },
+       
        async putsore(id) {
          store.post = id;
-     
-     
      },
-     
-       
-     
      },
-   
-     components: {
+
+     previousPhoto() {
+      if (this.currentPhotoIndex === 0) {
+        this.currentPhotoIndex = this.user.photos.length - 1
+      } else {
+        this.currentPhotoIndex--
+      }
+    },
+    nextPhoto() {
+      if (this.currentPhotoIndex === this.user.photos.length - 1) {
+        this.currentPhotoIndex = 0
+      } else {
+        this.currentPhotoIndex++
+      }
+    },
+
+    components: {
   
-     }
-   }
+    }
+  }
+   
    
    </script>
    <style>
@@ -111,12 +112,14 @@
      background-size: cover;
      }
      .cardborder {
-       border: 100% groove rgba(23,164,34,0.42);
-     border-radius: 10px 40px 0px 0px;
-     outline: 6px groove rgba(23,164,34,0.42);
+      border: 2px solid #808080;
+     border-radius: 0px;
+     outline: none;
      outline-offset: 9px;
-     display:inline-block
-     }
+     margin: 50px auto 50px auto;
+     display:block;
+     max-width: 50%;
+         }
      .textfont {
        
    font-family: "Courier New", Courier, monospace;
@@ -130,4 +133,11 @@
    font-variant: normal;
    text-transform: none;
      }
+     .card-header img {
+   margin-right: 10px;
+      }
+      hr {
+  border-color: #808080;
+  border-width: 2px;
+}
    </style>

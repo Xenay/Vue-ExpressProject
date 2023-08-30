@@ -12,7 +12,7 @@ Vue.use(VueSweetalert2);
 Vue.config.productionTip = false;
 
 const base = axios.create({
-  baseURL: "www.localhost:8080/",
+  baseURL: "http://localhost:5000/",
 });
 Vue.prototype.$http = base;
 Vue.config.productionTip = false;
