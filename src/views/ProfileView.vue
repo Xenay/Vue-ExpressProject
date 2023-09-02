@@ -11,12 +11,11 @@
             <input type="text" class="form-control" id="name-input" v-model="name" />
       </div>
         
-      <div v-for="photo in photos" :key="photo._id">
-      <img
-        :src="`data:image/jpeg;base64,${toBase64(photo.url.data)}`"
-        width="300"
-      />
-    </div>
+      <div class="photo-gallery">
+          <div v-for="photo in photos" :key="photo._id" class="photo-item">
+            <img :src="`data:image/jpeg;base64,${toBase64(photo.url.data)}`" width="300" height="300" />
+          </div>
+        </div>
 
        <!-- Input for adding new photos -->
     <input type="file" @change="handleFileChange" />
@@ -286,7 +285,26 @@ async addNewEntry(event) {
   };
 </script>
 
-  <style scoped>
+  <style >
+  .photo-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background-color: #f0f0f0; /* Set your desired backdrop color */
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.photo-item {
+  flex: 0 0 calc(33.33% - 10px); /* Adjust the width of each image item as per your layout */
+  max-width: calc(33.33% - 10px);
+}
+
+.photo-item img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 20px;
+}
   /* Add your styles here */
   </style>
   
