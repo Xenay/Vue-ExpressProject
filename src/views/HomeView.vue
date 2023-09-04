@@ -73,32 +73,7 @@
      async created() {
        try {
         this.users = await PostService.getUsers();
-         // Process the user data to ensure photos are in the desired format
-      this.users = this.users.map(user => {
-        // Check if user.photos is an array and has photos
-        if (Array.isArray(user.photos) && user.photos.length > 0) {
-          // Map each photo to the desired format
-          const photos = user.photos.map(photo => ({
-            url: {
-              data: photo.data, // Assuming the image data is in a property named 'data'
-              type: photo.type, // Assuming the image type is in a property named 'type'
-            },
-            _id: photo._id, // Include other properties if needed
-          }));
-
-          // Return the user object with the updated photos array
-          return {
-            ...user,
-            photos,
-          };
-        } else {
-          // If no photos are available or the format is different, return the user object as is
-          return user;
-        }
-      });
-        console.log(this.users);
-        
-         
+        console.log('Received users data:', this.users);
        } catch (err) {
          this.error = err.message;
        }
@@ -118,6 +93,7 @@
     },
 
       toBase64(arr) {
+        
       return btoa(String.fromCharCode(...new Uint8Array(arr)));
     },
        
@@ -127,17 +103,13 @@
      },
 
      previousPhoto() {
-      if (this.currentPhotoIndex === 0) {
-        this.currentPhotoIndex = this.user.photos.length - 1
-      } else {
-        this.currentPhotoIndex--
+      if (this.currentPhotoIndex > 0) {
+        this.currentPhotoIndex--;
       }
     },
     nextPhoto() {
-      if (this.currentPhotoIndex === this.user.photos.length - 1) {
-        this.currentPhotoIndex = 0
-      } else {
-        this.currentPhotoIndex++
+      if (this.currentPhotoIndex < this.users.length - 1) {
+        this.currentPhotoIndex++;
       }
     },
 
@@ -148,42 +120,62 @@
    
    
    </script>
-   <style>
-     .cardimage {
-    
+   <style scoped>
+   .cardimage {
      height: 80%;
-    -webkit-background-size: cover;
+     -webkit-background-size: cover;
      -moz-background-size: cover;
      -o-background-size: cover;
      background-size: cover;
-     }
-     .cardborder {
-      border: 2px solid #808080;
+   }
+   .cardborder {
+     border: 2px solid #808080;
      border-radius: 0px;
      outline: none;
      outline-offset: 9px;
      margin: 50px auto 50px auto;
-     display:block;
+     display: block;
      max-width: 50%;
-         }
-     .textfont {
-       
-   font-family: "Courier New", Courier, monospace;
-   font-size: 16px;
-   letter-spacing: 0px;
-   word-spacing: 2px;
-   color: #000000;
-   font-weight: 700;
-   
-   font-style: normal;
-   font-variant: normal;
-   text-transform: none;
-     }
-     .card-header img {
-   margin-right: 10px;
-      }
-      hr {
-  border-color: #808080;
-  border-width: 2px;
-}
+   }
+   .textfont {
+     font-family: "Courier New", Courier, monospace;
+     font-size: 16px;
+     letter-spacing: 0px;
+     word-spacing: 2px;
+     color: #000000;
+     font-weight: 700;
+     font-style: normal;
+     font-variant: normal;
+     text-transform: none;
+   }
+   .card-header img {
+     margin-right: 10px;
+   }
+   hr {
+     border-color: #808080;
+     border-width: 2px;
+   }
+   .photo-container {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     position: relative;
+   }
+   .photo-item {
+     position: relative;
+     text-align: center;
+   }
+   .arrow-button {
+     position: absolute;
+     top: 50%;
+     transform: translateY(-50%);
+     background-color: #007bff;
+     color: #fff;
+     border: none;
+     padding: 5px 10px;
+     cursor: pointer;
+   }
+   .arrow-button:hover {
+     background-color: #0056b3;
+   }
    </style>

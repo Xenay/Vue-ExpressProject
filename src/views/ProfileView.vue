@@ -117,15 +117,7 @@ created() {
 
 
 computed: {
-  resolvedImageUrls() {
-    const urls = {};
-    for (const photo of this.photos) {
-      this.getImageUrl(photo).then(url => {
-        urls[photo._id] = url;
-      });
-    }
-    return urls;
-  }
+  
 },
 
 methods: {
@@ -133,6 +125,7 @@ methods: {
   toBase64(arr) {
       return btoa(String.fromCharCode(...new Uint8Array(arr)));
     },
+
   
  
 
@@ -142,10 +135,12 @@ async handleFileChange(event) {
     },
 
     async getImageUrl(photo) {
+      console.log(photo);
   try {
    
     if (photo.data) {
-      const buffer = Buffer.from(photo.data.data);
+      
+      const buffer = Buffer.from(photo.data);
       const base64 = buffer.toString('base64');
       console.log(base64);
       return `data:image/png;base64,${base64}`; // Return the direct URL of the image

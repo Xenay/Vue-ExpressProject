@@ -6,8 +6,8 @@
       </div>
       <div class="nav-links">
         <a class = "nav-link" href = "/"> Home </a>
-        <a v-if = "isLoggedIn ===false" class = "nav-link" v-on:click= "authent" href = "/login" >Log In </a>
-        <a v-if = "isLoggedIn ===false" class = "nav-link" href = "/register" > SignUp </a>
+        <a v-if = "isLoggedIn ===true" class = "nav-link" v-on:click= "authent" href = "/login" >Log In </a>
+        <a v-if = "isLoggedIn ===true" class = "nav-link" href = "/register" > SignUp </a>
         <a v-if = "isLoggedIn ===false" class = "nav-link" href = "/profile" > Profile </a>
          
       </div>
@@ -41,7 +41,7 @@ methods: {
 
   async authent() {
   try {
-    let res = await axios.get('https://localhost:5000//user/me', {
+    let res = await axios.get('https://localhost:5000/user/me', {
       headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
     });
 
