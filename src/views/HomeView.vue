@@ -20,12 +20,12 @@
       <hr>
       {{ typeof user.equipment === 'string' ? user.equipment.replace(/[\[\]]/g, '') : user.equipment }}    </b-card-body>
      
-      <div v-if="user.photos && user.photos.length > 0">
-          <div v-for="photo in user.photos" :key="photo._id" class="photo-item">
-            <!-- Check if the photo.url is defined before attempting to display it -->
-            <img v-if="photo.url" :src="`data:image/jpeg;base64,${toBase64(photo.url.data)}`" width="300" height="300" />
-          </div>
-        </div>
+     <div v-if="user.photos && user.photos.length > 0">
+    <div v-for="photo in user.photos" :key="photo._id" class="photo-item">
+      <!-- Check if the photo.url.data is defined before attempting to display it -->
+      <img v-if="photo.url && photo.url.data" :src="getPhotoUrl(photo.url)" width="300" height="300" />
+    </div>
+  </div>
         
         <!-- Display error message if there are no photos or if there's an error -->
         <p v-else>Photos not available or an error occurred.</p>
@@ -89,13 +89,22 @@
       
 
       getPhotoUrl(photoUrl) {
-      return `data:${photoUrl.type};base64,${this.toBase64(photoUrl.data)}`;
+        if (photoUrl && photoUrl.data) {
+        return `data:${photoUrl.type};base64,${this.toBase64(photoUrl.data)}`;
+      } else {
+        return ''; // Return an empty string if the data is not available
+      }
     },
 
-      toBase64(arr) {
-        
-      return btoa(String.fromCharCode(...new Uint8Array(arr)));
+    toBase64(arr) {
+      try {
+        return btoa(String.fromCharCode(...new Uint8Array(arr)));
+      } catch (error) {
+        console.error('Error converting to base64:', error);
+        return ''; // Return an empty string in case of an error
+      }
     },
+ 
        
        async putsore(id) {
          store.post = id;

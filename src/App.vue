@@ -6,9 +6,9 @@
       </div>
       <div class="nav-links">
         <a class = "nav-link" href = "/"> Home </a>
-        <a v-if = "isLoggedIn ===true" class = "nav-link" v-on:click= "authent" href = "/login" >Log In </a>
-        <a v-if = "isLoggedIn ===true" class = "nav-link" href = "/register" > SignUp </a>
-        <a v-if = "isLoggedIn ===false" class = "nav-link" href = "/profile" > Profile </a>
+        <a v-if = "isLoggedIn == false" class = "nav-link" v-on:click= "authent" href = "/login" >Log In </a>
+        <a v-if = "isLoggedIn == false" class = "nav-link" href = "/register" > SignUp </a>
+        <a v-if = "isLoggedIn == false" class = "nav-link" href = "/profile" > Profile </a>
          
       </div>
     </nav>
@@ -40,23 +40,24 @@ data() {
 methods: {
 
   async authent() {
-  try {
-    let res = await axios.get('https://localhost:5000/user/me', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
-    });
+    try {
+        let res = await axios.get('https://localhost:5000/user/me', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+        });
 
-    let data = res.data;
-    this.login = data;
+        let data = res.data;
+        this.login = data;
 
-    localStorage.setItem('isAdmin', data.isAdmin);
+        localStorage.setItem('isAdmin', data.isAdmin);
 
-    store.login = res.data;
-    this.isLoggedIn = true; // Set isLoggedIn to true if the user is authenticated
-  } catch (err) {
-    console.error(err);
-    this.isLoggedIn = false; // Set isLoggedIn to false if there is an error
-  }
-},
+        store.login = res.data;
+        this.isLoggedIn = true; // Set isLoggedIn to true if the user is authenticated
+      } catch (err) {
+        console.error(err);
+        this.isLoggedIn = false; // Set isLoggedIn to false if there is an error
+      }
+    },
+
 
 async check() {
   if (authent() == true){ isLoggedIn = "true"
@@ -65,19 +66,17 @@ async check() {
   console.log("notloggedin");}
 },
 async checkIfLoggedIn() {
-  try {
-   
-    this.isLoggedIn = toLowerCase(localStorage.getItem("isLoggedIn"));
-  } catch (error) {
-    
-  }
-
-},
-},
+    const token = localStorage.getItem('jwt');
+    this.isLoggedIn = !!token; // User is logged in if a token is present
+    if (this.isLoggedIn) {
+      this.authent(); // If the user is logged in, fetch user data
+    }
+  },
+  },
 mounted() {
-//this.check();
+store.isLoggedIn = this.isLoggedIn;
 PostService.authent();
-this.authent;
+
 this.checkIfLoggedIn();
 },
 };

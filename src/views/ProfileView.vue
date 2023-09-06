@@ -14,6 +14,8 @@
       <div class="photo-gallery">
           <div v-for="photo in photos" :key="photo._id" class="photo-item">
             <img :src="`data:image/jpeg;base64,${toBase64(photo.url.data)}`" width="300" height="300" />
+            <button @click="deleteImage(photo._id)" class="btn btn-danger">Delete</button>
+
           </div>
         </div>
 
@@ -239,6 +241,25 @@ onRemoved() {
     }
   }
 },
+
+//DELETE
+async deleteImage(imageId) {
+      try {
+        const userId = this.id;
+        const response = await axios.delete(`http://localhost:5000/api/posts/${userId}/photos/${imageId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+        });
+
+        if (response.data.success) {
+          // If the image deletion was successful, update the local state to remove the deleted image
+          this.photos = this.photos.filter((photo) => photo._id !== imageId);
+        }
+      } catch (error) {
+        console.error('Error deleting image:', error);
+        // Handle error here
+      }
+    },
+  
 
 async addNewEntry(event) {
   try {
