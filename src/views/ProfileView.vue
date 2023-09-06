@@ -14,6 +14,8 @@
       <div class="photo-gallery">
           <div v-for="photo in photos" :key="photo._id" class="photo-item">
             <img :src="`data:image/jpeg;base64,${toBase64(photo.url.data)}`" width="300" height="300" />
+            <button @click="deleteImage(photo._id)" class="btn btn-danger">Delete</button>
+
           </div>
         </div>
 
@@ -117,15 +119,7 @@ created() {
 
 
 computed: {
-  resolvedImageUrls() {
-    const urls = {};
-    for (const photo of this.photos) {
-      this.getImageUrl(photo).then(url => {
-        urls[photo._id] = url;
-      });
-    }
-    return urls;
-  }
+  
 },
 
 methods: {
@@ -133,6 +127,7 @@ methods: {
   toBase64(arr) {
       return btoa(String.fromCharCode(...new Uint8Array(arr)));
     },
+
   
  
 
@@ -142,10 +137,12 @@ async handleFileChange(event) {
     },
 
     async getImageUrl(photo) {
+      console.log(photo);
   try {
    
     if (photo.data) {
-      const buffer = Buffer.from(photo.data.data);
+      
+      const buffer = Buffer.from(photo.data);
       const base64 = buffer.toString('base64');
       console.log(base64);
       return `data:image/png;base64,${base64}`; // Return the direct URL of the image
@@ -244,6 +241,25 @@ onRemoved() {
     }
   }
 },
+
+//DELETE
+async deleteImage(imageId) {
+      try {
+        const userId = this.id;
+        const response = await axios.delete(`http://localhost:5000/api/posts/${userId}/photos/${imageId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+        });
+
+        if (response.data.success) {
+          // If the image deletion was successful, update the local state to remove the deleted image
+          this.photos = this.photos.filter((photo) => photo._id !== imageId);
+        }
+      } catch (error) {
+        console.error('Error deleting image:', error);
+        // Handle error here
+      }
+    },
+  
 
 async addNewEntry(event) {
   try {
